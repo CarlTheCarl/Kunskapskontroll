@@ -3,6 +3,7 @@ import json
 import csv
 import logging
 import time
+import sys
 
 logging.basicConfig(
     filename= 'logfile.log',
@@ -19,18 +20,17 @@ user_agent_name = {'User-Agent':'MTG Elesh Norn Mother of Machines Price Tracker
 def scryfall_card_fetch(mtgcard):
     url = f"{base_url}/{mtgcard}"
     time.sleep(0.1) #Scryfall requests a 50-100 milisecond wait between responses, this is here to ensure that
-    logger.info('Sending REST Request to %s using User-Agent %s', url, user_agent_name)
-    response = requests.get(url, headers=user_agent_name, verify=True)
-    return response
+    logger.debug('Sending REST Request to %s using User-Agent %s', url, user_agent_name)
+    response = requests.get(url, headers=user_agent_name, verify=True) #scryfall requires API requests to be handled through HTTPS
+    if response.status_code == 200:
+        logger.info('Card info sucessfully retrieved, HTTP Code: %d', response.status_code)
+        card_info = response.json()
+        return card_info
+    else:
+        logger.critical('FATAL ERROR: Card not retrieved, HTTP Code: %d', response.status_code)
+        sys.exit('Card Fetch Failed HTTP Code: %d', response.status_code)
 
-response = scryfall_card_fetch('44dcab01-1d13-4dfc-ae2f-fbaa3dd35087')
-
-if response.status_code == 200:
-    logger.info('Card info sucessfully retrieved, HTTP Code: %d', response.status_code)
-else:
-    logger.critical('FATAL ERROR: Card not retrieved, HTTP Code: %d', response.status_code)
-
-print(response.status_code) #Temporary code for debugging purposes
-print(response.text)
+card_id = '44dcab01-1d13-4dfc-ae2f-fbaa3dd35087'
+card_info = scryfall_card_fetch(card_id)
 
 #logger.info('Sum of %d and %d is %d', i, j, mult_sum)
