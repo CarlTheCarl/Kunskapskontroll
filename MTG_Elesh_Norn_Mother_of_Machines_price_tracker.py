@@ -5,6 +5,7 @@ import logging
 import time
 import sys
 import os
+import pandas
 from datetime import date
 
 logging.basicConfig(
@@ -39,19 +40,40 @@ csv_dictionary = {}
 csv_dictionary['name'] = card_info['name']
 price_info = card_info['prices']
 for price_type in price_info:
-    csv_dictionary[price_type] = price_info[price_type]
+    if price_info[price_type] != None:
+        csv_dictionary[price_type] = float(price_info[price_type])
+    else:
+        csv_dictionary[price_type] = price_info[price_type]
 csv_dictionary['date_retrieved'] = date.today()
 
+print(csv_dictionary)
+# csv_list = []
+# csv_list.append(card_info['name'])
+# price_info = card_info['prices']
+# for price_type in price_info:
+#     if price_info[price_type] != None:
+#         csv_list.append(float(price_info[price_type]))
+#     else:
+#         csv_list.append(price_info[price_type])
+# csv_list.append(date.today())
+
 fieldnames = ['name', 'usd', 'usd_foil', 'usd_etched', 'eur', 'eur_foil', 'tix', 'date_retrieved']
-#TODO: fix so that all the diffrent headers and fields are in seperate cells
+#TODO: fix so that float works in excel
+df = pandas.DataFrame(csv_dictionary, index=fieldnames)
+df = df.drop_duplicates()
 if os.path.exists('Elesh_Norn_Price_History.csv'):
-    with open('Elesh_Norn_Price_History.csv', mode='a') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=';')
-        writer.writerow(csv_dictionary)
+    df.to_csv('Elesh_Norn_Price_History.csv',mode='a', header=False, sep=';', decimal =',', index=False)
 else:
-    with open('Elesh_Norn_Price_History.csv', mode='w') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=';')
-        writer.writeheader()
-        writer.writerow(csv_dictionary)
+    df.to_csv('Elesh_Norn_Price_History.csv', header=fieldnames, sep=';', decimal =',', index=False)
+    
+# if os.path.exists('Elesh_Norn_Price_History.csv'):
+#     with open('Elesh_Norn_Price_History.csv', mode='a') as csvfile:
+#         writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=';', decmial = ',')
+#         writer.writerow(csv_dictionary)
+# else:
+#     with open('Elesh_Norn_Price_History.csv', mode='w') as csvfile:
+#         writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=';', decmial = ',')
+#         writer.writeheader()
+#         writer.writerow(csv_dictionary)
 
 #logger.info('Sum of %d and %d is %d', i, j, mult_sum)
