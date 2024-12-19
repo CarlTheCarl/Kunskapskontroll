@@ -18,7 +18,7 @@ logger.setLevel(logging.DEBUG)
 
 #url = 'https://api.scryfall.com/cards/44dcab01-1d13-4dfc-ae2f-fbaa3dd35087'
 base_url = 'https://api.scryfall.com/cards'
-user_agent_name = {'User-Agent':'MTG Elesh Norn Mother of Machines Price Tracker/0.4'} #scryfall requires the user-agent to be named after its specific purpose
+user_agent_name = {'User-Agent':'MTG Elesh Norn Mother of Machines Price Tracker/1.0'} #scryfall requires the user-agent to be named after its specific purpose
 
 def scryfall_card_fetch(mtgcard):
     url = f"{base_url}/{mtgcard}"
