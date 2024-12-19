@@ -37,21 +37,31 @@ card_info = scryfall_card_fetch(card_id)
 print(card_info['prices'])
 print(card_info['name'])
 
-csv_mode = ''
+# csv_dictionary = {}
+# csv_dictionary['name'] = card_info['name']
+# price_info = card_info['prices']
+# for price_type in price_info:
+#     csv_dictionary[price_type] = price_info[price_type]
+# csv_dictionary['date_retrieved'] = date.today()
+
+csv_list = []
+csv_list.append(card_info['name'])
+price_info = card_info['prices']
+for price_type in price_info:
+    print(price_info[price_type])
+    csv_list.append(price_info[price_type])
+csv_list.append(date.today())
+
 if os.path.exists('Elesh_Norn_Price_History.csv'):
-    csv_mode = 'a'
+    with open('Elesh_Norn_Price_History.csv', mode='a') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(csv_list)
 else:
-    csv_mode ='w'
+    with open('Elesh_Norn_Price_History.csv', mode='w') as csvfile:
+        fieldnames = ['name', 'usd', 'usd_foil', 'usd_etched', 'eur', 'eur_foil', 'tix', 'date_retrieved']
+        writer = csv.writer(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerow(csv_list)
 #TODO: fix the append part of the csv writing script
-with open('Elesh_Norn_Price_History.csv', mode=csv_mode) as csvfile:
-    fieldnames = ['name', 'usd', 'usd_foil', 'usd_etched', 'eur', 'eur_foil', 'tix', 'date_retrieved']
-    csv_dictionary = {}
-    csv_dictionary['name'] = card_info['name']
-    price_info = card_info['prices']
-    for price_type in price_info:
-        csv_dictionary[price_type] = price_info[price_type]
-    csv_dictionary['date_retrieved'] = date.today()
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-    writer.writeheader()
-    writer.writerow(csv_dictionary)
+
 #logger.info('Sum of %d and %d is %d', i, j, mult_sum)
