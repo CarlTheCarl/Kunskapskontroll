@@ -12,7 +12,7 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M' #code is supposed to only run once per day so second/millisecond granularity is unecessary
 )
 logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.WARNING)
 
 base_url = 'https://api.scryfall.com/cards'
 user_agent_name = {'User-Agent':'MTG Elesh Norn Mother of Machines Price Tracker/1.0.1'} #scryfall requires the user-agent to be named after its specific purpose
@@ -43,12 +43,9 @@ for price_type in price_info:
         csv_dictionary[price_type] = price_info[price_type]
 csv_dictionary['date_retrieved'] = date.today()
 
-print(csv_dictionary)
-
 fieldnames = ['name', 'usd', 'usd_foil', 'usd_etched', 'eur', 'eur_foil', 'tix', 'date_retrieved']
-#TODO: fix so that float works in excel
 df = pandas.DataFrame(csv_dictionary, index=fieldnames)
-df = df.drop_duplicates()
+df = df.drop_duplicates() #TODO: fix so that this isn't needed
 if os.path.exists('Elesh_Norn_Price_History.csv'):
     df.to_csv('Elesh_Norn_Price_History.csv',mode='a', header=False, sep=';', decimal =',', index=False)
 else:
