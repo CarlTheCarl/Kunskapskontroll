@@ -36,9 +36,9 @@ card_info = scryfall_card_fetch(card_id)
 csv_dictionary = {}
 csv_dictionary['name'] = card_info['name']
 price_info = card_info['prices']
-for price_type in price_info:
+for price_type in price_info: #scryfall bundles all the prices in a nested dictionary, this is to unwrap that
     if price_info[price_type] != None:
-        csv_dictionary[price_type] = float(price_info[price_type])
+        csv_dictionary[price_type] = float(price_info[price_type]) #ensures that price is stored as a float
     else:
         csv_dictionary[price_type] = price_info[price_type]
 csv_dictionary['date_retrieved'] = date.today()
